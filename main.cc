@@ -14,9 +14,9 @@
 
 
 [[nodiscard]] inline std::string readFile(const std::string& fname) {
-    const std::ifstream fin{fname};
+    std::ifstream fin{fname};
 
-    if (not fin.is_open()) error("File \"" + fname + " \"not found!");
+    if (not fin.is_open()) error("File \"" + fname + "\" not found!");
 
     std::stringstream ss;
     ss << fin.rdbuf();
@@ -39,7 +39,7 @@ void REPL(
         std::string line;
         std::print(">>> ");
         std::getline(std::cin, line);
-        if (line.back() != ';') line += ';';
+        if (!line.empty() && line.back() != ';') line += ';';
 
 
         constexpr auto REPL = true;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     // if (argc < 2) error("Please pass a file name!");
 
     using std::operator""sv;
-    const auto canonical_root = std::filesystem::canonical(*argv);;
+    const auto canonical_root = std::filesystem::canonical(*argv);
 
     bool print_preprocessed = false;
     bool print_tokens       = false;

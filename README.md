@@ -1,13 +1,5 @@
 # Welcome to Pie Lang!
 
-<!-- 
-<div>
-    <img src="assets/images/PieLang_Logo.png">
-</div>
- -->
-
-<!-- ![Pie Lang Logo](assets/images/PieLang_Logo.png) -->
-<!-- ![Pie Lang Logo](assets/images/PieLang_Logo_white_bg.png) -->
 ![Pie Lang Logo](assets/images/PieLang_Logo_cool_bg.png)
 
 [![C++ CI](https://github.com/PiCake314/Pie/actions/workflows/cpp.yml/badge.svg)](https://github.com/PiCake314/Pie/actions/workflows/cpp.yml)
@@ -38,7 +30,7 @@
 - [Built-in Functions](#builtins)
 - [Types](#types)
 - [Keywords List](#keywords-list)
-- [Reserved Punctuaion](#reserved-punctuaion)
+- [Reserved Punctuation](#reserved-punctuation)
 - [Comments](#comments)
 - [Install](#install)
 - [Update](#update)
@@ -86,7 +78,7 @@ func(two=1, 1);
 
 ### Variadic Functions
 
-A function can have at most **one** variadic parameter. The variadic paramater can be anywhere in the parameter list.
+A function can have at most **one** variadic parameter. The variadic parameter can be anywhere in the parameter list.
 
 The variadic argument has to be annotated with a type with leading ellipsis `...<type>`:
 
@@ -132,16 +124,17 @@ h.prettyPrint();
 ## Unions
 Unions in Pie are what other languages call "Sum Types":
 
-depricated:
-~~U: Type = Union { Int | Double | String };~~
 ```pie
-U: Type = Union { Int; Double; String; };
+U: Type = union { Int; Double; String; };
 
 x: U = 1;
 y: U = 3.14;
 z: U = "Hello";
 ```
-Note that they also work with user defined types.
+
+**Note:** The old syntax `Union { Int | Double | String }` is deprecated. Use the `union` keyword with semicolons as shown above.
+
+Unions also work with user-defined types.
 
 
 ## Lists
@@ -173,7 +166,7 @@ loop 10 => {
     __builtin_print("Hi");
 };
 ```
-This programs prints "Hi" 10 times.\
+This program prints "Hi" 10 times.\
 We can also introduce a loop variable:
 ```pie
 loop 10 => i {
@@ -184,7 +177,7 @@ Note that the braces can be omitted (with or without the loop variable).
 
 
 **Kinds of Loops:**
-There are 4 kinds of loops in Pie. They all utilize the `loop` keyword. The kind of the loops depends on the type of the loop operand
+There are 4 kinds of loops in Pie. They all utilize the `loop` keyword. The kind of the loop depends on the type of the loop operand
 
 #### For Loop
 When the type of the operand is an `Int`
@@ -295,7 +288,7 @@ my_space = space {
 };
 ```
 
-Namespaces could seem like just a syntactic for `class`'s, but they're not! There is a major difference which is the fact that you can run arbitrary code inside namespaces. A class may only have assignments.
+Namespaces could seem like just syntactic sugar for `class`es, but they're not! There is a major difference which is the fact that you can run arbitrary code inside namespaces. A class may only have assignments.
 
 To access a member of a `namespace`, use the "scope resolution operator", or `::`:
 
@@ -325,7 +318,7 @@ __builtin_print(ns::x); .: prints 10
 ```
 This allows you to split code that belongs to a single namespace in multiple different files and have all the declarations be in the same namespace.
 
-**Keep in mind**, if you assign a namespace to another value, it loses it's content:
+**Keep in mind**, if you assign a namespace to another value, it loses its content:
 
 ```pie
 x = space { a = 1; };
@@ -410,7 +403,7 @@ infix(*)   star = (a, b) => 1;
 infix(* -) plus = (a, b) => 2;
 ```
 
-User defined operator `` has a lower
+Here, the `plus` operator has lower precedence than `star` due to the `* -` notation, which means multiplication-level minus one.
 
 An operator can also have the precedence of another operator:
 ```pie
@@ -428,7 +421,7 @@ Operator `sub` has a precedence that is equal to operator `add`'s precedence. Op
 
 ## Overloading
 
-You can overload operators based on the parameter types"
+You can overload operators based on the parameter types:
 ```pie
 infix(+) + = (a: Int, b: Int): Int => __builtin_add(a, b);
 infix(+) + = (a: String, b: String): String => __builtin_concat(a, b);
@@ -439,12 +432,12 @@ infix(+) + = (a: String, b: String): String => __builtin_concat(a, b);
 The `1 + 2` calls the first operator. `"Hi" + "Bye"` calls the second!
 
 ## Packs
-Pakcs in Pie are analogous to C++'s packs. One can only declare packs as a function parameter:
+Packs in Pie are analogous to C++'s packs. One can only declare packs as a function parameter:
 ```pie
 func = (pack: ...Any) => __builtin_print(pack);
 func(1, "Hello", 3.14);
 ```
-Note that to declare a pack, the argument **MUST** be given a type preceeded by ellipses. Packs may be empty.
+Note that to declare a pack, the argument **MUST** be given a type preceded by ellipses. Packs may be empty.
 
 #### Fold Expressions:
 Pie supports Fold Expressions, much like C++:
@@ -453,10 +446,10 @@ Pie supports Fold Expressions, much like C++:
 `(pack + ...)` 
 
 ##### Unary right fold
-`(... + pack)` 
+`(... + pack)`
 
-#### Binary left fold
-`(init + pack + ...)` 
+##### Binary left fold
+`(init + pack + ...)`
 `init` will be used as an initial value. Helps in the case where the pack is empty:
 
 ##### Binary right fold
@@ -470,7 +463,9 @@ The above expressions evaluates like this:
 This can be useful if you wanted to create a CSV entry from a bunch of strings for example.
 
 ##### Separated unary right fold
-`(pack + ... + sep)`
+`(sep + ... + pack)`
+The above expression evaluates right-to-left:
+`(arg1 + (sep + (arg2 + (sep + arg3))))`
 
 
 ##### Separated binary left fold
@@ -520,35 +515,36 @@ Pie reserves the names starting with `__builtin_`.
 
 ### Unary Functions
 
+- `__builtin_eval`
+- `__builtin_get`
+- `__builtin_len` (for strings and packs)
 - `__builtin_neg`
 - `__builtin_not`
-- `__builtin_mod`
 - `__builtin_reset`
-- `__builtin_eval`
-- `__builtin_len` (for strings and packs)
-- `__builtin_str_get`
 - `__builtin_split`
-- `__builtin_to_string`
-- `__builtin_to_int`
 - `__builtin_to_double`
+- `__builtin_to_int`
+- `__builtin_to_string`
 
 ### Binary Functions
 
 - `__builtin_add`
-- `__builtin_sub`
-- `__builtin_mul`
+- `__builtin_and`
 - `__builtin_div`
-- `__builtin_pow`
-- `__builtin_gt`
-- `__builtin_geq`
 - `__builtin_eq`
+- `__builtin_geq`
+- `__builtin_gt`
 - `__builtin_leq`
 - `__builtin_lt`
-- `__builtin_and`
+- `__builtin_mod`
+- `__builtin_mul`
 - `__builtin_or`
+- `__builtin_pow`
+- `__builtin_sub`
 
 ### Trinary Functions
 
+- `__builtin_set`
 - `__builtin_conditional`
 
 ### Quaternary Functions
@@ -613,7 +609,7 @@ infix + = (a, b) => __builtin_add(a, b);
 x: Syntax = 1 + a;
 ```
 
-`x` is a hadle to the AST which represents the expression `1 + a`.
+`x` is a handle to the AST which represents the expression `1 + a`.
 To evaluate `x`, you just need to call __builtin_eval on it:
 
 ```pie
@@ -656,7 +652,6 @@ this isn't
 - `import`
 - `space`
 - `use`
-<!-- - `space` -->
 
 ##### Operators
 - `prefix`
@@ -678,7 +673,7 @@ this isn't
 - `true`
 - `false`
 
-## Reserved Punctuaion
+## Reserved Punctuation
 
 - `__builtin_*`
 - `( )`
@@ -692,9 +687,9 @@ this isn't
 
 ## Install
 
-Make sure you have `git`, and C++ compiler that supports C++23. Then paste the following script in the terminal:
+Make sure you have `git`, and a C++ compiler that supports C++23. Then paste the following script in the terminal:
 
-```pie
+```
 mkdir PieLang
 cd PieLang
 
@@ -709,7 +704,7 @@ g++ -std=c++23 -Iincludes/mp11/include/ -Iincludes/cpp-std-extensions/include/ -
 
 To update the language, paste this into the terminal:
 
-```pie
+```
 cd Pie
 git pull
 cd ..
@@ -728,13 +723,13 @@ g++ -std=c++23 -Iincludes/mp11/include/ -Iincludes/cpp-std-extensions/include/ -
 - [ ] Add default values to function parameters
 - [ ] Make `=` and `=>` overloadable
 - [ ] File IO
-- [ ] Fix builin reset (value-reset, reset/name-reset) 
+- [ ] Fix builtin reset (value-reset, reset/name-reset) 
 - [ ] Use Big Int instead of `int64_t`
 - [ ] World domination
 - [ ] Move from Make to Bake
 - [ ] Improve error messages (add line and column numbers)
 - [ ] Add recursive operators
-- [ ] Remove depedency on stdx and boost
+- [ ] Remove dependency on stdx and boost
 - [ ] Compile to WASM & a web interface
 - [ ] Add LLVM backend
 
@@ -759,7 +754,7 @@ g++ -std=c++23 -Iincludes/mp11/include/ -Iincludes/cpp-std-extensions/include/ -
 - [x] Add match expression (like scala)
 - [x] Add add overloaded operators at runtime (instead of parse-time)
 - [x] Fixed infix operators parsing right to left!
-- [x] Implemnted `__builtin_eq` for all values!
+- [x] Implemented `__builtin_eq` for all values!
 - [x] Add named parameters to some builtin functions
 - [x] Add variadic arguments
 - [x] Add named arguments
@@ -772,9 +767,9 @@ g++ -std=c++23 -Iincludes/mp11/include/ -Iincludes/cpp-std-extensions/include/ -
 - [x] Add circumfix operators
 - [x] Add lazy evaluation
 - [x] Add constructor to classes..somehow
-- [x] Allow recursion..somhow
+- [x] Allow recursion..somehow
 - [x] Add classes
-- [x] Add assignment to any epxression
+- [x] Add assignment to any expression
 - [x] Add booleans
 - [x] Add closures
 
